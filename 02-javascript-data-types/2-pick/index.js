@@ -8,10 +8,9 @@ export const pick = (obj, ...fields) => {
   let entriesResult = [];
 
   for (let [key, value] of Object.entries(obj)) {
-    if(!fields.includes(key)) {
-      continue;
+    if (fields.includes(key)) {
+      entriesResult.push([key, value]);
     }
-    entriesResult.push([key, value]);
   }
 
   return Object.fromEntries(entriesResult);
