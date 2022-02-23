@@ -1,42 +1,20 @@
 export default class ColumnChart {
-  constructor(chartObject) {
+  constructor(chartObject = { data:[], label:'Total orders', value:344, link:'#' }) {
     this.createChartElement(chartObject);
   }
 
   chartHeight = 50;
-  ordersStyle = "dashboard__chart_orders";
-  salesStyle = "dashboard__chart_sales";
-  customersStyle = "dashboard__chart_customers";
 
   getChartTemplate(chartObject) {
-    if (!chartObject || chartObject.data?.length === 0) {
-      return `<div class="column-chart column-chart_loading" style="--chart-height: 50">
-                <div class="column-chart__title">
-                  Total orders
-                  <a class="column-chart__link" href="#">View all</a>
-                </div>
-                <div class="column-chart__container">
-                  <div data-element="header" class="column-chart__header">
-                    344
-                  </div>
-                  <div data-element="body" class="column-chart__chart">
-                  </div>
-                </div>
-              </div>`
-    }
-
-    return `<div class=${chartObject.link !== undefined ? this.ordersStyle :
-            chartObject.formatHeading !== undefined ? this.salesStyle : this.customersStyle}>
-              <div class="column-chart" style="--chart-height: ${this.chartHeight}">
-                <div class="column-chart__title">
-                  ${chartObject.label}
-                  ${this.getLinkTemplate(chartObject)}
-                </div>
-                <div class="column-chart__container">
-                  <div data-element="header" class="column-chart__header">${this.getColumnChartHeaderValue(chartObject)}</div>
-                  <div data-element="body" class="column-chart__chart">
-                    ${this.getChartNodesTemplate(chartObject.data)}
-                  </div>
+    return `<div class="column-chart ${chartObject.data?.length === 0 ? 'column-chart_loading' : ''}" style="--chart-height: ${this.chartHeight}">
+              <div class="column-chart__title">
+                ${chartObject.label}
+                ${this.getLinkTemplate(chartObject)}
+              </div>
+              <div class="column-chart__container">
+                <div data-element="header" class="column-chart__header">${this.getColumnChartHeaderValue(chartObject)}</div>
+                <div data-element="body" class="column-chart__chart">
+                  ${this.getChartNodesTemplate(chartObject.data)}
                 </div>
               </div>
             </div>`
@@ -63,13 +41,7 @@ export default class ColumnChart {
     chartNodesWrapper.innerHTML = chartNodesTemplate;
 
     const currentChart = this.element.querySelector('.column-chart__chart');
-    const removeChildNodes = node => {
-      while (node.firstChild) {
-        node.removeChild(node.firstChild);
-      }
-    }
-
-    removeChildNodes(currentChart);
+    currentChart.innerHTML = '';
     currentChart.append(...chartNodesWrapper.childNodes);
   }
 
