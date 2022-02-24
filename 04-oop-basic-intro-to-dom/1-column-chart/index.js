@@ -1,38 +1,44 @@
 export default class ColumnChart {
-  constructor(chartObject = { data:[], label:'Total orders', value:344, link:'#' }) {
-    this.createChartElement(chartObject);
+  constructor( { data=[], label='', value=0, link='', formatHeading=value => value } = {} ) {
+    this.data = data;
+    this.label = label;
+    this.value = value;
+    this.link = link;
+    this.formatHeading = formatHeading;
+
+    this.createChartElement();
   }
 
   chartHeight = 50;
 
-  getChartTemplate(chartObject) {
-    return `<div class="column-chart ${chartObject.data?.length === 0 ? 'column-chart_loading' : ''}" style="--chart-height: ${this.chartHeight}">
+  getChartTemplate() {
+    return `<div class="column-chart ${this.data.length === 0 ? 'column-chart_loading' : ''}" style="--chart-height: ${this.chartHeight}">
               <div class="column-chart__title">
-                ${chartObject.label}
-                ${this.getLinkTemplate(chartObject)}
+                ${this.label}
+                ${this.getLinkTemplate()}
               </div>
               <div class="column-chart__container">
-                <div data-element="header" class="column-chart__header">${this.getColumnChartHeaderValue(chartObject)}</div>
+                <div data-element="header" class="column-chart__header">${this.getColumnChartHeaderValue()}</div>
                 <div data-element="body" class="column-chart__chart">
-                  ${this.getChartNodesTemplate(chartObject.data)}
+                  ${this.getChartNodesTemplate(this.data)}
                 </div>
               </div>
             </div>`
   }
 
-  createChartElement(chartObject) {
+  createChartElement() {
     const wrapper = document.createElement('div');
-    wrapper.innerHTML = this.getChartTemplate(chartObject);
+    wrapper.innerHTML = this.getChartTemplate();
 
     this.element = wrapper.firstElementChild;
   }
 
-  getLinkTemplate(chartObject) {
-    return chartObject.link ? `<a href="${chartObject.link}" class="column-chart__link">View all</a>` : '';
+  getLinkTemplate() {
+    return this.link ? `<a href="${this.link}" class="column-chart__link">View all</a>` : '';
   }
 
-  getColumnChartHeaderValue(chartObject) {
-    return chartObject.formatHeading !== undefined ? chartObject.formatHeading(chartObject.value) : chartObject.value;
+  getColumnChartHeaderValue() {
+    return this.formatHeading !== undefined ? this.formatHeading(this.value) : this.value;
   }
 
   update(arr = []) {
